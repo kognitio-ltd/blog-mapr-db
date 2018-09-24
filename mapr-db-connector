@@ -1,0 +1,24 @@
+#!/bin/bash
+# Basic Kognitio MapR-DB connectivity
+#
+case $WX2_METHOD in
+INIT)
+  # set the maximum amount of memory we'll use
+  echo "WX2ATTR:RAM_MB_REQUIRED 300"
+;;
+DESTROY)
+;;
+CONNECT)
+;;
+PROJECT)
+;;
+LOAD)
+  # manage memory ourselves - the limit set by the database isn't suitable for Java 
+  ulimit -v unlimited
+  export MAPR_OPTS=-Xmx150m 
+  mapr dbshell find ${WX2_TABLE} | head -n -1 | wxjson2csv -J ${WX2_SPECIFICATION} -
+  exit $?
+;;
+esac
+exit 0
+
